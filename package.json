@@ -1,0 +1,29 @@
+{
+  "name": "taipei-library",
+  "version": "0.0.1",
+  "sadmain": "dist/index.js",
+  "author": "Hsu Karinsu <m80126colin@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "main": "dist/index.bundle.js",
+  "scripts": {
+    "clean": "rm -rf dist/",
+    "build": "yarn run clean",
+    "build:data": "npx babel-node lib/",
+    "start": "npx babel-node lib/"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "bluebird": "^3.5.5",
+    "cheerio": "^1.0.0-rc.3",
+    "core-js": "^3.1.4",
+    "lodash": "^4.17.14",
+    "rss-parser": "^3.7.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.0",
+    "@babel/core": "^7.5.4",
+    "@babel/node": "^7.5.0",
+    "@babel/preset-env": "^7.5.4"
+  }
+}
