@@ -1,19 +1,22 @@
 import _ from 'lodash';
 
 const rules = [
-  '普遍級', '保護級',
-  '輔導級', '限制級'
+  ['普遍級', '普'],
+  ['保護級', '保', '護'],
+  ['輔12級', '輔12'],
+  ['輔15級', '輔15'],
+  ['輔導級', '輔'],
+  ['限制級', '限']
 ]
 
 const generator = rule => {
-  const fst = rule[0]
-  const snd = rule[1]
-  const lst = rule[2]
+  const fst  = rule[0]
+  const pats = _.join(rule, '|')
   return {
-    pattern: `[（(]${fst}(?:${snd}${lst}?)?[)）]|${fst}${snd}${lst}?`,
+    pattern: `[（(]${pats}[)）]|${fst}`,
     fn: entry => {
       return {
-        data: rule,
+        data: fst,
         type: 'level'
       }
     }
