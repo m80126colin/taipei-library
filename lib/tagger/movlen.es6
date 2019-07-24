@@ -1,5 +1,5 @@
 const movlen = {
-  pattern: '(\\d+)分(?!機)鐘?',
+  pattern: '(?<!時)(\\d+)分(?!機)鐘?',
   fn: entry => {
     return {
       data: parseInt(entry[1]),

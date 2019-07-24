@@ -7,7 +7,7 @@ const rss = new Parser()
 
 const type = 'ntpc'
 
-const link   = id  => `https://tpml.gov.taipei/News_Content.aspx?n=F969DE2A717178AE&s=${id}`
+const link   = id  => `http://www.library.ntpc.gov.tw/MainPortal/htmlcnt/${id}`
 const unlink = str => {
   const id = str.match(/\/([^/]+)$/u)[1]
   return id
