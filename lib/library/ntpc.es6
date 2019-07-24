@@ -1,21 +1,49 @@
-import _ from 'lodash';
+import _       from 'lodash';
+import axios   from 'axios';
+import cheerio from 'cheerio';
+import Parser  from 'rss-parser';
 
-const tpml = [
-  '松山分館', '民生分館', '三民分館', '中崙分館', '啟明分館',
-  '永春分館', '三興分館', '六合分館', '總館', '道藩分館',
-  '大安分館', '延吉民眾閱覽室', '成功民眾閱覽室', '龍安民眾閱覽室', '中山分館',
-  '長安分館', '大直分館', '恆安民眾閱覽室', '王貫英先生紀念圖書館', '城中分館',
-  '南機場借還書工作站', '延平分館', '大同分館', '建成分館', '蘭州民眾閱覽室',
-  '龍山分館', '東園分館', '西園分館', '萬華分館', '柳鄉民眾閱覽室',
-  '景美分館', '木柵分館', '永建分館', '萬興分館', '文山分館',
-  '力行分館', '景新分館', '安康民眾閱覽室', '萬芳民眾閱覽室', '公訓圖書站',
-  '南港分館', '舊莊分館', '親子美育數位圖書館', '龍華民眾閱覽室', '北原會館借還書工作站',
-  '內湖分館', '東湖分館', '西湖分館', '西中分館', '葫蘆堵分館',
-  '天母分館', '士林分館臨時替代館', '李科永紀念圖書館', '北投分館', '石牌分館',
-  '清江分館', '吉利分館', '永明民眾閱覽室', '秀山民眾閱覽室', '陽明借還書工作站'
-]
+const rss = new Parser()
 
-const ntpc = [
+const type = 'ntpc'
+
+const link   = id  => `https://tpml.gov.taipei/News_Content.aspx?n=F969DE2A717178AE&s=${id}`
+const unlink = str => {
+  const id = str.match(/\/([^/]+)$/u)[1]
+  return id
+}
+
+const parserList = async () => {
+  const root = 'http://www.library.ntpc.gov.tw/MainPortal/htmlcnt/rss/ActvInfo'
+  const { data : rootData } = await axios.get(root)
+  const feed = await rss.parseString(rootData)
+  const rows = _.chain(feed.items)
+    .map(item => {
+      const id = unlink(item.link)
+      return {
+        link: item.link,
+        collect: {
+          id: `${type}-${id}`,
+          timestamp: (new Date(item.isoDate)).valueOf(),
+          link: { type, id },
+          title:  item.title,
+          author: item.author
+        }
+      }
+    })
+    .filter(obj => /電影/u.test(obj.collect.title))
+    .value()
+  return rows
+}
+const parserRow = async row => {
+  const { data : site } = await axios.get(row.link)
+  const $ = cheerio.load(site)
+  const content = $('.article-content p').text()
+  const article = _.merge(row.collect, { content })
+  return article
+}
+
+const branch = [
   '八里分館', '三芝分館', '三重五常分館', '三重田中分館', '三重崇德分館',
   '三重分館', '三重東區分館', '三重南區分館', '三重培德分館', '三峽分館',
   '三峽北大分館', '土城柑林埤圖書閱覽室', '土城祖田圖書閱覽室', '土城清水圖書閱覽室', '土城分館',
@@ -39,15 +67,14 @@ const ntpc = [
   '蘆洲集賢分館', '蘆洲兒童親子分館', '蘆洲仁愛智慧圖書館', '鶯歌分館', '鶯歌二甲圖書閱覽室'
 ]
 
-const lookup = _.chain([
-  ..._.map(tpml, lib => {
-    return { library: lib, type: 'tpml' }
-  }),
-  ..._.map(ntpc, lib => {
-    return { library: lib, type: 'ntpc' }
-  })
-])
-.groupBy('library')
-.value()
-
-export default lookup
+export default {
+  label: '新北市立圖書館',
+  type,
+  link,
+  unlink,
+  parser: {
+    list: parserList,
+    row:  parserRow
+  },
+  branch
+}

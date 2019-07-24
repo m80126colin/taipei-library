@@ -1,12 +1,13 @@
 import _ from 'lodash';
 
-import lookup from '../data/library';
+import library from '../library';
 
-const pat = _.keys(lookup)
+const branch  = library.branchAll()
+const pattern = _.keys(branch)
 
 const tagger = [
   {
-    pattern:`(${_.join(pat,'\|')})`,
+    pattern:`(${_.join(pattern,'\|')})`,
     fn: entry => {
       return {
         data: entry[1],

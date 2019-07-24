@@ -7,12 +7,13 @@
   "private": true,
   "main": "dist/index.bundle.js",
   "scripts": {
-    "clean": "rm -rf dist/",
-    "build": "yarn run clean",
-    "build:data": "npx babel-node lib/articleList.es6",
+    "clean": "rm -rf lib/data/articles.json",
+    "build": "yarn run build:show",
+    "build:full": "yarn run build:data && yarn run build:show",
+    "build:show": "npx babel-node lib/",
+    "build:data": "yarn run clean && npx babel-node lib/articleList.es6",
     "deploy": "webpack --mode production",
-    "dev": "webpack --watch --mode development",
-    "start": "npx babel-node lib/"
+    "dev": "webpack --watch --mode development"
   },
   "dependencies": {
     "axios": "^0.19.0",
