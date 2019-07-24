@@ -19,7 +19,7 @@ const extracter = tag => {
   const timeOrDate = new RegExp(`[${timeOrDatePat}]`, 'u')
   if (text.length < 2 || !timeOrDate.test(text))
     return []
-  const { pattern } = _.chain(_.range(2, 6))
+  const { pattern } = _.chain(_.range(2, 8))
     .flatMap(len => _.chain(_.range(0, text.length - len))
       .map(start => text.substr(start, len))
       .filter(segment => timeOrDate.test(segment))

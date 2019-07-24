@@ -11,9 +11,9 @@ const rules = [
 
 const generator = rule => {
   const fst  = rule[0]
-  const pats = _.join(rule, '|')
+  const pats = _.join(rule, '\|')
   return {
-    pattern: `[（(]${pats}[)）]|${fst}`,
+    pattern: `[／/（(　]?(?:${pats})[ 　)）/／]|${fst}`,
     fn: entry => {
       return {
         data: fst,

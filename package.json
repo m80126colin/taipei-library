@@ -9,7 +9,9 @@
   "scripts": {
     "clean": "rm -rf dist/",
     "build": "yarn run clean",
-    "build:data": "npx babel-node lib/",
+    "build:data": "npx babel-node lib/articleList.es6",
+    "deploy": "webpack --mode production",
+    "dev": "webpack --watch --mode development",
     "start": "npx babel-node lib/"
   },
   "dependencies": {
@@ -24,6 +26,9 @@
     "@babel/cli": "^7.5.0",
     "@babel/core": "^7.5.4",
     "@babel/node": "^7.5.0",
-    "@babel/preset-env": "^7.5.4"
+    "@babel/preset-env": "^7.5.4",
+    "babel-loader": "^8.0.6",
+    "webpack": "^4.37.0",
+    "webpack-cli": "^3.3.6"
   }
 }

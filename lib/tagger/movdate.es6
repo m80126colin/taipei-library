@@ -14,7 +14,7 @@ const formatter = (year, month, date) => {
 
 const config = [
   {
-    pattern: '(?:(\\d{2,4})年)?(\\d{1,2})月(?:(\\d{1,2})日)?',
+    pattern: '(?:(\\d{2,4})\s*年)?\s*(\\d{1,2})\s*月(?:\s*(\\d{1,2})\s*日)?',
     fn: entry => {
       const m = _.slice(entry, 1, 1 + 3)
       return {

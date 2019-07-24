@@ -5,6 +5,27 @@ import Promise from 'bluebird';
 import tpml from './tpml';
 import ntpc from './ntpc';
 
+const textPreprocess = text => {
+  const s = '０１２３４５６７８９'
+  return _.chain(s)
+    .split('')
+    .reduce((chain, ch, idx) => chain.replace(new RegExp(ch, 'ug'), idx), _.chain(text))
+    .replace(/／/ug, '/')
+    .replace(/\&[lr]squo;/ug, '\'')
+    .replace(/\&[lr]dquo;/ug, '"')
+    .replace(/\&bull;/ug, '')
+    .replace(
+      /(?:(\d{2,4})\s*年)?\s*(\d{1,2})\s*月(?:\s*(\d{1,2})\s*日)?/umg,
+      (match, year, month, day) => {
+        let str = ''
+        if (year)  str += `${year}年`
+        if (month) str += `${month}月`
+        if (day)   str += `${day}日`
+        return str
+      })
+    .value()
+}
+
 const filter = async () => {
   const library = [ tpml, ntpc ]
   const promise = _.reduce(library, async (prev, item) => {
@@ -23,7 +44,13 @@ const filter = async () => {
     return [...list, ...articles]
   }, Promise.resolve([]))
   const articles = await promise
-  const result = _.sortBy(articles, article => -article.timestamp)
+  const result = _.chain(articles)
+    .sortBy(article => -article.timestamp)
+    .map(article => _.merge(article, {
+      title:   textPreprocess(article.title),
+      content: textPreprocess(article.content)
+    }))
+    .value()
   return result
 }
 
