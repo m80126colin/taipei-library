@@ -38,7 +38,7 @@ const parserList = async () => {
 const parserRow = async row => {
   const { data : site } = await axios.get(row.link)
   const $ = cheerio.load(site)
-  const content = $('.article-content p').text()
+  const content = $('.article-content').text()
   const article = _.merge(row.collect, { content })
   return article
 }

@@ -23,7 +23,6 @@ const articleExtract = async () => {
     .filter(s => s.show.length === 0)
     .map(s => library.link(s.link.type, s.link.id))
     .value()
-  console.log({ noshow })
   await write(`${__dirname}/data/show.json`, JSON.stringify(result), 'utf8')
 }
 articleExtract()

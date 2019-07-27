@@ -1,29 +1,15 @@
 import _ from 'lodash';
-import posts from '../lib/data/show.json';
 
-const linkGen = ({ type, id }) => {
-  switch (type) {
-    case 'ntpc':
-      return `http://www.library.ntpc.gov.tw:80/MainPortal/htmlcnt/${id}`
-    case 'tpml':
-      return `https://tpml.gov.taipei/News_Content.aspx?n=F969DE2A717178AE&s=${id}`
-  }
-}
+import library from '../lib/library';
+import posts   from '../lib/data/show.json';
 
-const libGen = p => {
-  switch (p) {
-    case 'ntpc':
-      return '新北市立圖書館'
-    case 'tpml':
-      return '臺北市立圖書館'
-  }
-}
+const p = str => _.padStart(str, 2, '0')
 
 const timeGen = ts => {
   if (ts.start) {
     const { hour, minute } = ts.start
     return _.chain([ hour, minute ])
-      .map(n => _.padStart(n, 2, '0'))
+      .map(n => p(n))
       .join(':')
       .value()
   }
@@ -31,7 +17,7 @@ const timeGen = ts => {
 }
 
 const dateTimeGen = (d, ts) => {
-  const date = `${d.year}-${d.month}-${d.day}`
+  const date = `${d.year}-${p(d.month)}-${p(d.day)}`
   const time = timeGen(ts)
   return time ? `${date} ${time}` : date
 }
@@ -51,7 +37,7 @@ const levelGen = level => {
 
 const show = _.chain(posts)
   .flatMap(post => {
-    const link  = linkGen(post.link)
+    const link  = library.link(post.link.type, post.link.id)
     return _.map(post.show, s => {
       const datetime  = dateTimeGen(s.date, s.time)
       const timestamp = (new Date(datetime)).valueOf()
@@ -62,9 +48,9 @@ const show = _.chain(posts)
         id:      post.id,
         title:   s.title,
         place:   s.place,
-        library: libGen(post.link.type),
+        library: library.label(post.link.type),
         level:   levelGen(s.level),
-        length:  s.length || 0
+        length:  s.length
       }
     })
   })
@@ -77,7 +63,7 @@ _.map(show, s => {
     s.place,
     `<a href="${s.link}" target="_blank">${s.library}</a>`,
     `<label class="ui ${s.level.color} label">${s.level.text}</label><label class="ui label">自動</label> ${s.title}`,
-    ''
+    s.length ? s.length : ''
   ]
   const row = `<tr><td>${_.join(jun, '</td><td>')}</td></tr>`
   $('#showTable tr:last').after(row)
