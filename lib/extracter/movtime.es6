@@ -10,7 +10,7 @@ const timeProc = o => {
   }
 }
 
-const extracter = (title, content, total, cycle) => {
+const extracter = (title, remains, cycle) => {
   const time = _.chain(cycle)
     .filter(timeIdf)
     .map(timeProc)
@@ -23,15 +23,22 @@ const extracter = (title, content, total, cycle) => {
     default:
       break;
   }
-  const time_def = _.chain(content.info)
+  const time_def = _.chain(remains)
     .filter(timeIdf)
-    .filter(o => o.index < _.head(cycle).index)
-    .filter(o => _.findIndex(total, o) < 0)
     .map(timeProc)
     .value()
   if (time_def.length === 0)
     return {}
-  return { start: _.last(time_def) }
+  if (time_def.length === 1)
+    return { start: _.head(time_def) }
+  if (time_def.length === 2) {
+    const fst = _.head(time_def)
+    const snd = _.last(time_def)
+    if (fst.hour * 60 + fst.minute < snd.hour * 60 + snd.minute)
+      return { start: fst, end: snd }
+    return { start: fst }
+  }
+  return { start: _.head(time_def) }
 }
 
 export default {

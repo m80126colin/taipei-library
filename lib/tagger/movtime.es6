@@ -11,7 +11,7 @@ const config = [
   {
     pattern: '(\\d{1,2})[時點](?:(\\d{1,2})分)?',
     fn: entry => {
-      const minute = entry[1] ? entry[1] : '00'
+      const minute = entry[2] ? entry[2] : '00'
       return {
         data: `${entry[1]}:${minute}`,
         type: 'time'

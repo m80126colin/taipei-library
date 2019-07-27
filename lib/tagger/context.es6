@@ -2,10 +2,19 @@ import _ from 'lodash';
 
 const config = [
   {
-    pattern: '播映影片\|播映場次\|活動內容\|場次資訊\|播出片名\|場次：\|片名：\|電影名稱\|影片名稱',
+    pattern: '播映場次\|場次資訊\|場次：',
     fn: () => {
       return {
         data: '場次',
+        type: 'context'
+      }
+    }
+  },
+  {
+    pattern: '播映影片\|活動內容\|播出片名\|片名：\|電影名稱\|影片名稱',
+    fn: () => {
+      return {
+        data: '片名',
         type: 'context'
       }
     }

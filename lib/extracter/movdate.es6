@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 const dateIdf = o => o.type === 'date'
 
-const extracter = (title, content, total, cycle) => {
+const extracter = (title, remains, cycle) => {
   const date = _.chain(cycle)
     .filter(dateIdf)
     .filter(o => {

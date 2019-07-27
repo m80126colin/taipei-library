@@ -5,6 +5,8 @@ import util from 'util';
 import tagger    from './tagger';
 import extracter from './extracter';
 
+import library from './library';
+
 import rows from './data/articles.json';
 
 const write = util.promisify(fs.writeFile)
@@ -17,6 +19,10 @@ const articleExtract = async () => {
       .merge({ show })
       .value()
   })
+  const noshow = _.chain(result)
+    .filter(s => s.show.length === 0)
+    .map(s => library.link(s.link.type, s.link.id))
+    .value()
   await write(`${__dirname}/data/show.json`, JSON.stringify(result), 'utf8')
 }
 articleExtract()

@@ -21,7 +21,7 @@ _.mixin({
   },
   clearDate(str) {
     return _.chain(str)
-      .replace(/\d+\s*月\s*\d+\s*日[：:]?/u, '00/00 ')
+      .replace(/(\d+\s*年\s*)?\d+\s*月\s*\d+\s*日[：:]?/u, '00/00 ')
       .replace(/\d+\s*\/\s*\d+/u, ' ')
       .value()
   },
@@ -178,6 +178,19 @@ const config = [
       return title
     }
   ],
+  [
+    'TDLH', (text, cycle) => {
+      const str = sub(text, cycle, 1, 2)
+      const title = _.chain(str)
+        .clearDate()
+        .clearBraketPair()
+        .split('/')
+        .head()
+        .trim()
+        .value()
+      return title
+    }
+  ]
   /*[ 'PDC',     nullity ],
   [ 'PDCP',    nullity ],
   [ 'DCTTCP',  nullity ],
